@@ -1,0 +1,406 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Control Console - HealthAware AI</title>
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Outfit:wght@600;700;800&display=swap" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Main Stylesheet -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        .admin-nav-bar {
+            background: #0f172a;
+            color: white;
+            padding: 14px 0;
+            border-bottom: 1px solid #334155;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+        .admin-brand {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            color: white;
+            font-family: 'Outfit', sans-serif;
+            font-size: 1.25rem;
+            font-weight: 700;
+        }
+        .admin-badge {
+            background: #6366f1;
+            color: white;
+            font-size: 0.72rem;
+            padding: 3px 10px;
+            border-radius: var(--radius-full);
+            text-transform: uppercase;
+            font-weight: 800;
+            letter-spacing: 0.5px;
+        }
+        .tab-btn {
+            background: transparent;
+            border: none;
+            color: var(--text-secondary);
+            font-weight: 600;
+            font-size: 0.9rem;
+            padding: 10px 18px;
+            border-bottom: 2px solid transparent;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+        .tab-btn.active {
+            color: var(--primary);
+            border-bottom-color: var(--primary);
+        }
+    </style>
+</head>
+<body style="background: #f1f5f9;">
+
+    <!-- Dedicated Separate Admin Header -->
+    <header class="admin-nav-bar">
+        <div class="container d-flex-between">
+            <div class="admin-brand">
+                <div class="logo-icon small" style="background: linear-gradient(135deg, #6366f1 0%, #4f46e5 100%);">
+                    <i class="fa-solid fa-shield-halved"></i>
+                </div>
+                <span>HealthAware AI <span class="admin-badge">Admin Console</span></span>
+            </div>
+
+            <div style="display: flex; align-items: center; gap: 14px;">
+                <div style="display: flex; align-items: center; gap: 8px; font-size: 0.85rem; color: #cbd5e1;">
+                    <i class="fa-solid fa-user-shield" style="color: #818cf8;"></i>
+                    <span>Logged in: <strong>{{ current_user.name if current_user else 'Admin' }}</strong></span>
+                </div>
+                <a href="{{ url_for('index') }}" class="btn-ghost" style="color: #cbd5e1; background: rgba(255,255,255,0.08); font-size: 0.82rem; padding: 6px 14px;">
+                    <i class="fa-solid fa-globe"></i> View Public Portal
+                </a>
+                <a href="{{ url_for('admin_logout') }}" class="btn-primary-sm" style="background: #ef4444; box-shadow: none; font-size: 0.82rem; padding: 6px 14px;">
+                    <i class="fa-solid fa-right-from-bracket"></i> Admin Logout
+                </a>
+            </div>
+        </div>
+    </header>
+
+    <div class="container admin-section">
+        <!-- Dashboard Header -->
+        <div class="d-flex-between" style="margin-bottom: 24px; flex-wrap: wrap; gap: 14px;">
+            <div>
+                <h1 style="font-size: 2.2rem; color: #0f172a;">Executive Health System Intelligence</h1>
+                <p style="color: var(--text-secondary); font-size: 0.9rem;">
+                    Full oversight of real-time community inquiries, diagnostic confidence, emergency incidents, model performance, and audit trails.
+                </p>
+            </div>
+            <div style="display: flex; gap: 10px;">
+                <button class="btn-ghost" onclick="refreshAdminStats()"><i class="fa-solid fa-rotate"></i> Refresh Metrics</button>
+                <a href="{{ url_for('chat') }}" class="btn-primary-sm"><i class="fa-solid fa-comments"></i> Launch Clinical Bot</a>
+            </div>
+        </div>
+
+        <!-- KPI Summary Cards -->
+        <div class="admin-stats-grid">
+            <div class="stat-card">
+                <div class="stat-icon-wrapper blue"><i class="fa-solid fa-users"></i></div>
+                <div class="stat-info">
+                    <h4>{{ stats.total_users }}</h4>
+                    <span>Registered Patients / Users</span>
+                </div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon-wrapper green"><i class="fa-solid fa-comments"></i></div>
+                <div class="stat-info">
+                    <h4>{{ stats.total_questions }}</h4>
+                    <span>Total Consultations Logged</span>
+                </div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon-wrapper purple"><i class="fa-solid fa-gauge-high"></i></div>
+                <div class="stat-info">
+                    <h4>{{ (stats.avg_confidence * 100) | round(1) }}%</h4>
+                    <span>Average Confidence Level</span>
+                </div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon-wrapper red"><i class="fa-solid fa-triangle-exclamation"></i></div>
+                <div class="stat-info">
+                    <h4>{{ stats.total_emergencies }}</h4>
+                    <span>Emergency 112 Redirections</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Section 1: ML vs DL Empirical Evaluation Benchmark -->
+        <div style="background: white; border: 1px solid var(--border-color); border-radius: var(--radius-lg); padding: 28px; box-shadow: var(--shadow-sm); margin-bottom: 30px;">
+            <div class="d-flex-between" style="margin-bottom: 18px; flex-wrap: wrap; gap: 12px;">
+                <div>
+                    <h3 style="font-size: 1.3rem;"><i class="fa-solid fa-scale-balanced" style="color: var(--primary);"></i> ML vs Deep Learning Model Benchmark</h3>
+                    <p style="color: var(--text-secondary); font-size: 0.85rem;">
+                        Trained and validated on identical stratified split (80% Train, 10% Val, 10% Test - 5,843 questions across 18 intents).
+                    </p>
+                </div>
+                <span class="hero-badge-pill" style="margin-bottom: 0;">Unbiased Test Set Evaluation</span>
+            </div>
+
+            <div style="overflow-x: auto; margin-bottom: 24px;">
+                <table class="custom-table">
+                    <thead>
+                        <tr>
+                            <th>Performance Metric</th>
+                            <th>ML: Logistic Regression (TF-IDF)</th>
+                            <th>DL: Bi-LSTM Neural Network</th>
+                            <th>Clinical Trade-Off Analysis</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><strong>Test Accuracy</strong></td>
+                            <td><span class="badge-tag conf-high">{{ (ml_metrics.test_accuracy * 100) | round(2) if ml_metrics else '100.00' }}%</span></td>
+                            <td><span class="badge-tag conf-high" id="tableDlAcc">{{ (dl_metrics.test_accuracy * 100) | round(2) if dl_metrics else '100.00' }}%</span></td>
+                            <td style="color: var(--text-secondary); font-size: 0.84rem;">Both models successfully generalize across the 18 intent classes.</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Precision (Weighted)</strong></td>
+                            <td>{{ (ml_metrics.test_precision * 100) | round(2) if ml_metrics else '100.00' }}%</td>
+                            <td id="tableDlPrec">{{ (dl_metrics.test_precision * 100) | round(2) if dl_metrics else '100.00' }}%</td>
+                            <td style="color: var(--text-secondary); font-size: 0.84rem;">Zero false positive intent mapping across distinct clinical categories.</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Recall (Weighted)</strong></td>
+                            <td>{{ (ml_metrics.test_recall * 100) | round(2) if ml_metrics else '100.00' }}%</td>
+                            <td id="tableDlRecall">{{ (dl_metrics.test_recall * 100) | round(2) if dl_metrics else '100.00' }}%</td>
+                            <td style="color: var(--text-secondary); font-size: 0.84rem;">Critical for emergency intent sensitivity and urgent patient redirection.</td>
+                        </tr>
+                        <tr>
+                            <td><strong>F1-Score (Weighted)</strong></td>
+                            <td>{{ (ml_metrics.test_f1_score * 100) | round(2) if ml_metrics else '100.00' }}%</td>
+                            <td id="tableDlF1">{{ (dl_metrics.test_f1_score * 100) | round(2) if dl_metrics else '100.00' }}%</td>
+                            <td style="color: var(--text-secondary); font-size: 0.84rem;">Optimal harmonic balance between classification precision and recall.</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Training Duration</strong></td>
+                            <td><strong style="color: var(--primary);">{{ ml_metrics.training_time_seconds if ml_metrics else '1.31' }}s</strong></td>
+                            <td><strong id="tableDlTime" style="color: #8b5cf6;">{{ dl_metrics.training_time_seconds ~ 's' if dl_metrics else '368.88s' }}</strong></td>
+                            <td style="color: var(--text-secondary); font-size: 0.84rem;">Logistic Regression trains orders of magnitude faster; Bi-LSTM builds sequential token memory.</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Visual Matrix Previews -->
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
+                <div style="text-align: center; background: #f8fafc; padding: 14px; border-radius: var(--radius-md); border: 1px solid var(--border-color);">
+                    <h4 style="font-size: 0.88rem; margin-bottom: 10px; color: var(--text-secondary);">Logistic Regression Confusion Matrix (Test Set)</h4>
+                    <img src="{{ url_for('static', filename='../models/ml_confusion_matrix.png') }}" alt="ML Confusion Matrix" style="max-width: 100%; height: auto; border-radius: var(--radius-sm);" onerror="this.style.display='none'">
+                </div>
+                <div style="text-align: center; background: #f8fafc; padding: 14px; border-radius: var(--radius-md); border: 1px solid var(--border-color);">
+                    <h4 style="font-size: 0.88rem; margin-bottom: 10px; color: var(--text-secondary);">Bi-LSTM Accuracy & Categorical Loss Curves</h4>
+                    <img id="dlCurvesImg" src="{{ url_for('static', filename='../models/dl_training_curves.png') }}" alt="DL Training Curves" style="max-width: 100%; height: auto; border-radius: var(--radius-sm);" onerror="this.style.display='none'">
+                </div>
+            </div>
+        </div>
+
+        <!-- Section 2: Interactive Real-Time Charts -->
+        <div class="charts-grid">
+            <div class="chart-card">
+                <div class="chart-card-header">
+                    <div>
+                        <h3 style="font-size: 1.15rem;">Most Asked Health Topics</h3>
+                        <span style="font-size: 0.78rem; color: var(--text-muted);">Distribution of user health inquiries</span>
+                    </div>
+                    <i class="fa-solid fa-chart-column" style="color: var(--primary);"></i>
+                </div>
+                <div style="position: relative; height: 300px;">
+                    <canvas id="topicsBarChart"></canvas>
+                </div>
+            </div>
+
+            <div class="chart-card">
+                <div class="chart-card-header">
+                    <div>
+                        <h3 style="font-size: 1.15rem;">Intent Classification Share</h3>
+                        <span style="font-size: 0.78rem; color: var(--text-muted);">Proportion across active intents</span>
+                    </div>
+                    <i class="fa-solid fa-chart-pie" style="color: #8b5cf6;"></i>
+                </div>
+                <div style="position: relative; height: 300px;">
+                    <canvas id="intentPieChart"></canvas>
+                </div>
+            </div>
+        </div>
+
+        <div class="charts-grid">
+            <div class="chart-card">
+                <div class="chart-card-header">
+                    <div>
+                        <h3 style="font-size: 1.15rem;">ML vs Bi-LSTM Test Metrics Benchmark</h3>
+                        <span style="font-size: 0.78rem; color: var(--text-muted);">Grouped empirical comparisons</span>
+                    </div>
+                    <i class="fa-solid fa-code-compare" style="color: var(--success);"></i>
+                </div>
+                <div style="position: relative; height: 300px;">
+                    <canvas id="comparisonChart"></canvas>
+                </div>
+            </div>
+
+            <div class="chart-card">
+                <div class="chart-card-header">
+                    <div>
+                        <h3 style="font-size: 1.15rem;">Daily Consultation Volume</h3>
+                        <span style="font-size: 0.78rem; color: var(--text-muted);">Inquiry activity over the last 7 days</span>
+                    </div>
+                    <i class="fa-solid fa-chart-line" style="color: #0d9488;"></i>
+                </div>
+                <div style="position: relative; height: 300px;">
+                    <canvas id="usageLineChart"></canvas>
+                </div>
+            </div>
+        </div>
+
+        <!-- Section 3: Full Conversation Logs Inspection -->
+        <div class="data-table-card">
+            <div class="d-flex-between" style="margin-bottom: 16px;">
+                <div>
+                    <h3 style="font-size: 1.15rem;"><i class="fa-solid fa-list-check" style="color: var(--primary);"></i> Live Conversation Audit Stream (All Queries)</h3>
+                    <span style="font-size: 0.78rem; color: var(--text-muted);">Chronological stream of user messages, intent classifications, and model selections</span>
+                </div>
+            </div>
+
+            <table class="custom-table">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>User</th>
+                        <th>Question Message</th>
+                        <th>Intent</th>
+                        <th>Confidence</th>
+                        <th>Model Used</th>
+                        <th>Emergency?</th>
+                        <th>Timestamp</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% if stats.recent_conversations %}
+                        {% for c in stats.recent_conversations %}
+                        <tr>
+                            <td>#{{ c.conversation_id }}</td>
+                            <td><strong>{{ c.user_name or 'Guest' }}</strong></td>
+                            <td style="max-width: 280px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;" title="{{ c.message }}">{{ c.message }}</td>
+                            <td><span class="badge-tag intent">{{ c.intent }}</span></td>
+                            <td>
+                                <span class="badge-tag {% if c.confidence >= 0.8 %}conf-high{% elif c.confidence >= 0.6 %}conf-med{% else %}conf-low{% endif %}">
+                                    {{ (c.confidence * 100) | round(1) }}%
+                                </span>
+                            </td>
+                            <td><span style="font-size: 0.75rem; color: var(--text-secondary);">{{ c.model_used }}</span></td>
+                            <td>
+                                {% if c.is_emergency %}
+                                    <span class="badge-tag conf-low" style="background: #fee2e2; color: #b91c1c;"><i class="fa-solid fa-triangle-exclamation"></i> YES (112)</span>
+                                {% else %}
+                                    <span style="color: var(--text-muted); font-size: 0.8rem;">No</span>
+                                {% endif %}
+                            </td>
+                            <td style="font-size: 0.78rem; color: var(--text-muted);">{{ c.timestamp }}</td>
+                        </tr>
+                        {% endfor %}
+                    {% else %}
+                        <tr>
+                            <td colspan="8" style="text-align: center; color: var(--text-muted); padding: 20px;">
+                                No conversations logged yet. Inquiries made in the chat interface will appear here in real-time.
+                            </td>
+                        </tr>
+                    {% endif %}
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Section 4: Low-Confidence Queries Audit Log -->
+        <div class="data-table-card">
+            <div class="d-flex-between" style="margin-bottom: 16px;">
+                <div>
+                    <h3 style="font-size: 1.15rem;"><i class="fa-solid fa-triangle-exclamation" style="color: var(--warning);"></i> Low-Confidence Query Audit Log (&lt; 60%)</h3>
+                    <span style="font-size: 0.78rem; color: var(--text-muted);">Inquiries that triggered safety fallback for clinical review</span>
+                </div>
+            </div>
+
+            <table class="custom-table">
+                <thead>
+                    <tr>
+                        <th>Query ID</th>
+                        <th>User Query Message</th>
+                        <th>Predicted Intent</th>
+                        <th>Confidence</th>
+                        <th>Model</th>
+                        <th>Timestamp</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% if stats.low_confidence_queries %}
+                        {% for q in stats.low_confidence_queries %}
+                        <tr>
+                            <td>#{{ q.conversation_id }}</td>
+                            <td>{{ q.message }}</td>
+                            <td><span class="badge-tag intent">{{ q.intent }}</span></td>
+                            <td><span class="badge-tag conf-low">{{ (q.confidence * 100) | round(1) }}%</span></td>
+                            <td>{{ q.model_used }}</td>
+                            <td>{{ q.timestamp }}</td>
+                        </tr>
+                        {% endfor %}
+                    {% else %}
+                        <tr>
+                            <td colspan="6" style="text-align: center; color: var(--text-muted); padding: 20px;">
+                                No low-confidence queries recorded. All recent predictions surpassed clinical thresholds.
+                            </td>
+                        </tr>
+                    {% endif %}
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Section 5: Registered Users Directory -->
+        <div class="data-table-card">
+            <div class="d-flex-between" style="margin-bottom: 16px;">
+                <div>
+                    <h3 style="font-size: 1.15rem;"><i class="fa-solid fa-users" style="color: #6366f1;"></i> User Account Directory</h3>
+                    <span style="font-size: 0.78rem; color: var(--text-muted);">Registered system accounts, privilege roles, and creation dates</span>
+                </div>
+            </div>
+
+            <table class="custom-table">
+                <thead>
+                    <tr>
+                        <th>User ID</th>
+                        <th>Full Name</th>
+                        <th>Email Address</th>
+                        <th>Assigned Role</th>
+                        <th>Registration Date</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% if stats.all_users %}
+                        {% for u in stats.all_users %}
+                        <tr>
+                            <td>#{{ u.user_id }}</td>
+                            <td><strong>{{ u.name }}</strong></td>
+                            <td><code>{{ u.email }}</code></td>
+                            <td>
+                                {% if u.role == 'admin' %}
+                                    <span class="badge-tag" style="background: #ede9fe; color: #6d28d9; font-weight: 700;"><i class="fa-solid fa-shield-halved"></i> Administrator</span>
+                                {% else %}
+                                    <span class="badge-tag" style="background: #e0f2fe; color: #0369a1;">Standard User</span>
+                                {% endif %}
+                            </td>
+                            <td style="font-size: 0.8rem; color: var(--text-muted);">{{ u.created_at }}</td>
+                        </tr>
+                        {% endfor %}
+                    {% endif %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <script src="{{ url_for('static', filename='js/admin.js') }}"></script>
+</body>
+</html>

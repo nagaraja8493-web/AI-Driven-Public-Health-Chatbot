@@ -1,0 +1,142 @@
+{% extends "base.html" %}
+
+{% block title %}Home - AI-Driven Public Health Assistant{% endblock %}
+
+{% block content %}
+<!-- Hero Section -->
+<section class="hero-section">
+    <div class="container hero-grid">
+        <div class="hero-text-col">
+            <div class="hero-badge-pill">
+                <i class="fa-solid fa-microchip"></i>
+                <span>Dual AI: TF-IDF Machine Learning & Bi-LSTM Deep Learning</span>
+            </div>
+            <h1 class="hero-title">
+                Reliable Public Health <span class="hero-highlight">Awareness</span> at Your Fingertips
+            </h1>
+            <p class="hero-desc">
+                An intelligent conversational assistant designed to bridge public health information gaps, answer symptom queries, and guide communities on preventive care—backed by clinical safety thresholds and emergency detection.
+            </p>
+            <div class="hero-cta-group">
+                <a href="{{ url_for('chat') }}" class="btn-primary hero-btn-lg">
+                    <i class="fa-solid fa-comments"></i> Start Conversation
+                </a>
+                <a href="{{ url_for('topics') }}" class="btn-ghost hero-btn-lg">
+                    <i class="fa-solid fa-book-medical"></i> Explore Health Library
+                </a>
+            </div>
+            <div class="hero-stats-row">
+                <div class="hero-stat-item">
+                    <h3>18+</h3>
+                    <span>Health Intent Categories</span>
+                </div>
+                <div class="hero-stat-item">
+                    <h3>Dual AI</h3>
+                    <span>ML & Bi-LSTM Models</span>
+                </div>
+                <div class="hero-stat-item">
+                    <h3>< 0.60</h3>
+                    <span>Confidence Safety Fallback</span>
+                </div>
+                <div class="hero-stat-item">
+                    <h3>112</h3>
+                    <span>Emergency Redirection</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Hero Card Live Demonstration -->
+        <div class="hero-card-preview">
+            <div class="preview-header">
+                <div>
+                    <span style="font-weight: 700; font-size: 0.95rem;">Live AI Diagnostic Demo</span>
+                    <div style="font-size: 0.75rem; color: var(--text-muted);">Real-time intent classification preview</div>
+                </div>
+                <span class="model-indicator"><i class="fa-solid fa-bolt"></i> Bi-LSTM Active</span>
+            </div>
+
+            <div class="preview-chat-bubble preview-user">
+                What are common symptoms of diabetes?
+            </div>
+            <div class="preview-chat-bubble preview-bot">
+                <strong>Diabetes Mellitus Awareness:</strong><br>
+                Common symptoms include excessive thirst, frequent urination (especially at night), unexplained weight changes, and fatigue.
+            </div>
+
+            <div class="confidence-bar-wrapper">
+                <div class="confidence-bar-header">
+                    <span>Predicted Intent: <strong>diabetes</strong></span>
+                    <span style="color: var(--success); font-weight: 700;">94.2% Confidence</span>
+                </div>
+                <div class="progress-track">
+                    <div class="progress-fill" style="width: 94.2%;"></div>
+                </div>
+            </div>
+
+            <div style="margin-top: 14px; text-align: center;">
+                <a href="{{ url_for('chat') }}?q=What are common symptoms of diabetes?" class="btn-primary-sm" style="width: 100%; justify-content: center;">
+                    Try This Query in Live Chat &rarr;
+                </a>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Popular Health Categories -->
+<section style="padding: 60px 0;">
+    <div class="container">
+        <div class="d-flex-between" style="margin-bottom: 30px;">
+            <div>
+                <span class="hero-badge-pill"><i class="fa-solid fa-stethoscope"></i> Community Awareness</span>
+                <h2>Frequently Asked Health Topics</h2>
+            </div>
+            <a href="{{ url_for('topics') }}" class="btn-ghost">View All 16 Topics &rarr;</a>
+        </div>
+
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 24px;">
+            {% for topic in featured_topics %}
+            <div class="topic-card">
+                <div class="topic-card-icon">
+                    <i class="fa-solid fa-heart-pulse"></i>
+                </div>
+                <h3 class="topic-card-title">{{ topic.topic_name }}</h3>
+                <p class="topic-card-desc">{{ topic.description[:120] }}...</p>
+                <div class="topic-card-actions">
+                    <a href="{{ url_for('chat') }}?q=What are key guidelines for {{ topic.topic_name }}?" class="btn-primary-sm" style="flex: 1; justify-content: center;">
+                        <i class="fa-solid fa-comments"></i> Ask Bot
+                    </a>
+                    <a href="{{ url_for('topics') }}#topic-{{ topic.topic_id }}" class="btn-ghost" style="padding: 8px 12px;">
+                        Details
+                    </a>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+
+<!-- Emergency Alert Callout Banner -->
+<section style="padding: 0 0 60px;">
+    <div class="container">
+        <div style="background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%); border-radius: var(--radius-lg); padding: 36px 40px; color: white; border: 1px solid #334155; display: grid; grid-template-columns: 1.2fr 0.8fr; gap: 30px; align-items: center;">
+            <div>
+                <div style="display: inline-flex; align-items: center; gap: 8px; background: rgba(239, 68, 68, 0.2); border: 1px solid rgba(239, 68, 68, 0.4); color: #fca5a5; font-size: 0.8rem; font-weight: 700; padding: 4px 12px; border-radius: var(--radius-full); margin-bottom: 14px;">
+                    <i class="fa-solid fa-bell pulse-anim"></i> Life-Safety Layer Active
+                </div>
+                <h3 style="font-size: 1.8rem; color: white; margin-bottom: 12px;">Immediate Emergency Redirection</h3>
+                <p style="color: #cbd5e1; font-size: 0.95rem; line-height: 1.6;">
+                    The chatbot continuously scans for critical life-threatening conditions (e.g., crushing chest pain, difficulty breathing, stroke symptoms, severe bleeding). When detected, diagnostic responses are bypassed immediately in favor of emergency services.
+                </p>
+            </div>
+            <div style="text-align: right; background: rgba(255, 255, 255, 0.05); padding: 24px; border-radius: var(--radius-md); border: 1px solid rgba(255, 255, 255, 0.1);">
+                <div style="font-size: 0.82rem; text-transform: uppercase; color: #94a3b8; font-weight: 700;">Unified Emergency Helpline (India)</div>
+                <div style="font-size: 3rem; font-weight: 900; color: #f87171; font-family: 'Outfit', sans-serif;">112</div>
+                <div style="font-size: 0.85rem; color: #e2e8f0; margin-top: 4px;">Ambulance: <strong>102 / 108</strong></div>
+                <a href="{{ url_for('faq') }}#emergency" class="btn-primary" style="margin-top: 16px; background: var(--emergency); box-shadow: 0 4px 14px rgba(239, 68, 68, 0.4); width: 100%; justify-content: center;">
+                    View Emergency Protocols
+                </a>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}

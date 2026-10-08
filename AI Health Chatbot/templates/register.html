@@ -1,0 +1,48 @@
+{% extends "base.html" %}
+
+{% block title %}User Registration{% endblock %}
+
+{% block content %}
+<div class="container" style="padding: 60px 0 80px; max-width: 480px;">
+    <div style="background: white; border: 1px solid var(--border-color); border-radius: var(--radius-lg); padding: 36px; box-shadow: var(--shadow-md);">
+        <div style="text-align: center; margin-bottom: 24px;">
+            <div class="logo-icon" style="margin: 0 auto 14px;">
+                <i class="fa-solid fa-user-plus"></i>
+            </div>
+            <h2 style="font-size: 1.6rem; margin-bottom: 6px;">Create Your Account</h2>
+            <p style="color: var(--text-muted); font-size: 0.85rem;">Access private health query history & personalized notes</p>
+        </div>
+
+        {% if error %}
+        <div style="background: #fee2e2; border: 1px solid #fecaca; color: #991b1b; padding: 10px 14px; border-radius: var(--radius-sm); font-size: 0.85rem; margin-bottom: 18px;">
+            <i class="fa-solid fa-circle-exclamation"></i> {{ error }}
+        </div>
+        {% endif %}
+
+        <form method="POST" action="{{ url_for('register') }}">
+            <div style="margin-bottom: 16px;">
+                <label style="display: block; font-size: 0.85rem; font-weight: 600; margin-bottom: 6px; color: var(--text-secondary);">Full Name</label>
+                <input type="text" name="name" required placeholder="Dr. John Doe" class="search-input" style="padding: 10px 14px; border-radius: var(--radius-sm); font-size: 0.9rem;">
+            </div>
+
+            <div style="margin-bottom: 16px;">
+                <label style="display: block; font-size: 0.85rem; font-weight: 600; margin-bottom: 6px; color: var(--text-secondary);">Email Address</label>
+                <input type="email" name="email" required placeholder="user@example.com" class="search-input" style="padding: 10px 14px; border-radius: var(--radius-sm); font-size: 0.9rem;">
+            </div>
+
+            <div style="margin-bottom: 24px;">
+                <label style="display: block; font-size: 0.85rem; font-weight: 600; margin-bottom: 6px; color: var(--text-secondary);">Password</label>
+                <input type="password" name="password" required placeholder="Create a secure password" class="search-input" style="padding: 10px 14px; border-radius: var(--radius-sm); font-size: 0.9rem;">
+            </div>
+
+            <button type="submit" class="btn-primary" style="width: 100%; justify-content: center; padding: 12px; font-size: 0.95rem;">
+                <i class="fa-solid fa-user-check"></i> Register Account
+            </button>
+        </form>
+
+        <div style="text-align: center; margin-top: 20px; font-size: 0.85rem; color: var(--text-secondary);">
+            Already have an account? <a href="{{ url_for('login') }}" style="font-weight: 600;">Sign in here</a>
+        </div>
+    </div>
+</div>
+{% endblock %}

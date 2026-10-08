@@ -1,0 +1,124 @@
+{% extends "base.html" %}
+
+{% block title %}Health Library & Disease Awareness{% endblock %}
+
+{% block content %}
+<div class="container" style="padding: 40px 0 60px;">
+    <!-- Topics Header -->
+    <div class="topics-header">
+        <span class="hero-badge-pill"><i class="fa-solid fa-book-medical"></i> Verified Knowledge Base</span>
+        <h1 style="font-size: 2.4rem; margin-bottom: 12px;">Public Health Topics Directory</h1>
+        <p style="color: var(--text-secondary); max-width: 650px; margin: 0 auto;">
+            Explore evidence-based awareness guides on common health conditions, prevention best practices, and clinical red flags indicating when to consult a physician.
+        </p>
+
+        <!-- Search Bar -->
+        <div class="search-box-wrapper">
+            <i class="fa-solid fa-magnifying-glass search-icon"></i>
+            <input type="text" id="topicSearchInput" class="search-input" placeholder="Search health topics (e.g., fever, diabetes, hypertension, asthma, first aid)..." oninput="filterTopics()">
+        </div>
+    </div>
+
+    <!-- Topics Grid -->
+    <div class="topics-grid" id="topicsGrid">
+        {% for topic in topics %}
+        <div class="topic-card" id="topic-{{ topic.topic_id }}" data-title="{{ topic.topic_name | lower }}" data-desc="{{ topic.description | lower }}">
+            <div class="topic-card-icon">
+                <i class="fa-solid fa-heart-pulse"></i>
+            </div>
+            <h3 class="topic-card-title">{{ topic.topic_name }}</h3>
+            <p class="topic-card-desc">{{ topic.description }}</p>
+            
+            <div style="margin-bottom: 16px; padding: 12px; background: #f8fafc; border-radius: var(--radius-sm); border: 1px solid var(--border-color); font-size: 0.82rem;">
+                <strong style="color: #0369a1;"><i class="fa-solid fa-shield-virus"></i> Key Prevention:</strong>
+                <p style="color: var(--text-secondary); margin-top: 4px;">{{ topic.prevention[:130] }}...</p>
+            </div>
+
+            <div class="topic-card-actions">
+                <button type="button" class="btn-ghost" style="flex: 1; justify-content: center; font-size: 0.82rem;" onclick="openTopicModal({{ topic.topic_id }}, '{{ topic.topic_name | escape }}', '{{ topic.description | escape }}', '{{ topic.prevention | escape }}', '{{ topic.when_to_seek_help | escape }}')">
+                    <i class="fa-solid fa-circle-info"></i> Full Protocol
+                </button>
+                <a href="{{ url_for('chat') }}?q=What are key guidelines for {{ topic.topic_name }}?" class="btn-primary-sm" style="flex: 1; justify-content: center; font-size: 0.82rem;">
+                    <i class="fa-solid fa-comments"></i> Ask Bot
+                </a>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+
+<!-- Health Topic Full Detail Modal -->
+<div class="modal-overlay" id="topicModalOverlay" onclick="closeTopicModal(event)">
+    <div class="modal-card" id="modalCard">
+        <button class="modal-close-btn" onclick="closeTopicModalDirect()"><i class="fa-solid fa-xmark"></i></button>
+        <div style="display: flex; align-items: center; gap: 14px; margin-bottom: 16px;">
+            <div class="topic-card-icon" style="margin-bottom: 0;">
+                <i class="fa-solid fa-stethoscope"></i>
+            </div>
+            <div>
+                <span class="hero-badge-pill" style="margin-bottom: 4px; padding: 2px 10px; font-size: 0.72rem;">Verified Public Health Topic</span>
+                <h2 id="modalTopicTitle" style="font-size: 1.5rem;">Topic Name</h2>
+            </div>
+        </div>
+
+        <div style="margin-bottom: 20px;">
+            <h4 style="font-size: 0.95rem; margin-bottom: 6px; color: var(--text-primary);"><i class="fa-solid fa-notes-medical" style="color: var(--primary);"></i> Overview & Symptoms</h4>
+            <p id="modalTopicDesc" style="color: var(--text-secondary); font-size: 0.9rem; line-height: 1.6;"></p>
+        </div>
+
+        <div style="margin-bottom: 20px; background: #ecfdf5; border: 1px solid #a7f3d0; border-radius: var(--radius-md); padding: 16px;">
+            <h4 style="font-size: 0.95rem; margin-bottom: 6px; color: #065f46;"><i class="fa-solid fa-hand-holding-heart"></i> Preventive Care & Lifestyle Management</h4>
+            <p id="modalTopicPrevention" style="color: #047857; font-size: 0.88rem; line-height: 1.6;"></p>
+        </div>
+
+        <div style="margin-bottom: 24px; background: #fef2f2; border: 1px solid #fecaca; border-radius: var(--radius-md); padding: 16px;">
+            <h4 style="font-size: 0.95rem; margin-bottom: 6px; color: #991b1b;"><i class="fa-solid fa-hospital-user"></i> When to Seek Immediate Medical Help</h4>
+            <p id="modalTopicWhenHelp" style="color: #b91c1c; font-size: 0.88rem; line-height: 1.6;"></p>
+        </div>
+
+        <div style="display: flex; justify-content: flex-end; gap: 12px;">
+            <button class="btn-ghost" onclick="closeTopicModalDirect()">Close</button>
+            <a id="modalAskBotBtn" href="{{ url_for('chat') }}" class="btn-primary-sm">
+                <i class="fa-solid fa-comments"></i> Ask AI Chatbot About This
+            </a>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    function filterTopics() {
+        const query = document.getElementById('topicSearchInput').value.toLowerCase().trim();
+        const cards = document.querySelectorAll('.topic-card');
+        cards.forEach(card => {
+            const title = card.getAttribute('data-title');
+            const desc = card.getAttribute('data-desc');
+            if (title.includes(query) || desc.includes(query)) {
+                card.style.display = 'flex';
+            } else {
+                card.style.display = 'none';
+            }
+        });
+    }
+
+    function openTopicModal(id, title, desc, prevention, whenHelp) {
+        document.getElementById('modalTopicTitle').innerText = title;
+        document.getElementById('modalTopicDesc').innerText = desc;
+        document.getElementById('modalTopicPrevention').innerText = prevention;
+        document.getElementById('modalTopicWhenHelp').innerText = whenHelp;
+        document.getElementById('modalAskBotBtn').href = "{{ url_for('chat') }}?q=What are key guidelines for " + encodeURIComponent(title) + "?";
+        document.getElementById('topicModalOverlay').classList.add('active');
+    }
+
+    function closeTopicModalDirect() {
+        document.getElementById('topicModalOverlay').classList.remove('active');
+    }
+
+    function closeTopicModal(event) {
+        if (event.target === document.getElementById('topicModalOverlay')) {
+            closeTopicModalDirect();
+        }
+    }
+</script>
+{% endblock %}

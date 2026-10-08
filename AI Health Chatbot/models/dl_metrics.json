@@ -1,0 +1,33 @@
+{
+    "model": "Bi-LSTM (Embedding + Bi-LSTM + Softmax)",
+    "train_samples": 4674,
+    "val_samples": 584,
+    "test_samples": 585,
+    "training_time_seconds": 368.8835,
+    "epochs_trained": 25,
+    "validation_accuracy": 1.0,
+    "test_accuracy": 1.0,
+    "test_precision": 1.0,
+    "test_recall": 1.0,
+    "test_f1_score": 1.0,
+    "classes": [
+        "allergy",
+        "asthma",
+        "cold",
+        "cough",
+        "diabetes",
+        "digestive_health",
+        "emergency",
+        "fever",
+        "first_aid",
+        "goodbye",
+        "greeting",
+        "headache",
+        "heart_health",
+        "hygiene",
+        "hypertension",
+        "mental_wellness",
+        "nutrition",
+        "vaccination"
+    ]
+}

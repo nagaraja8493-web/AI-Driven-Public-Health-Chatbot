@@ -1,0 +1,100 @@
+{% extends "base.html" %}
+
+{% block title %}Emergency & Frequently Asked Questions{% endblock %}
+
+{% block content %}
+<div class="container" style="padding: 40px 0 60px;">
+    <!-- Emergency Callout Section -->
+    <div id="emergency" style="background: linear-gradient(135deg, #7f1d1d 0%, #991b1b 100%); color: white; border-radius: var(--radius-lg); padding: 36px 40px; margin-bottom: 50px; box-shadow: var(--shadow-lg); border: 2px solid #ef4444;">
+        <div style="display: flex; align-items: center; gap: 14px; margin-bottom: 16px;">
+            <div style="width: 48px; height: 48px; background: rgba(255, 255, 255, 0.2); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 1.5rem;">
+                <i class="fa-solid fa-triangle-exclamation pulse-anim"></i>
+            </div>
+            <div>
+                <span style="font-size: 0.8rem; text-transform: uppercase; letter-spacing: 1px; color: #fecaca; font-weight: 700;">Life Safety Protocol</span>
+                <h2 style="font-size: 2rem; color: white;">Emergency Guidance & Red Flags</h2>
+            </div>
+        </div>
+
+        <p style="color: #fef2f2; font-size: 1.05rem; line-height: 1.6; max-width: 820px; margin-bottom: 24px;">
+            If you or someone around you experiences any of the following red flag medical symptoms, <strong>do not rely on a chatbot or search engine</strong>. Seek emergency hospital care or dial emergency hotlines immediately.
+        </p>
+
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 18px; margin-bottom: 30px;">
+            <div style="background: rgba(0, 0, 0, 0.25); padding: 18px; border-radius: var(--radius-md); border-left: 4px solid #f87171;">
+                <h4 style="color: white; font-size: 1rem; margin-bottom: 4px;"><i class="fa-solid fa-heart-crack"></i> Chest Pain / Heart</h4>
+                <p style="color: #fee2e2; font-size: 0.82rem;">Crushing pressure radiating to the left arm, neck, or jaw, accompanied by cold sweat or nausea.</p>
+            </div>
+            <div style="background: rgba(0, 0, 0, 0.25); padding: 18px; border-radius: var(--radius-md); border-left: 4px solid #f87171;">
+                <h4 style="color: white; font-size: 1rem; margin-bottom: 4px;"><i class="fa-solid fa-lungs"></i> Severe Breathlessness</h4>
+                <p style="color: #fee2e2; font-size: 0.82rem;">Gasping for air, blue tint on lips or fingernails, or inability to speak full sentences.</p>
+            </div>
+            <div style="background: rgba(0, 0, 0, 0.25); padding: 18px; border-radius: var(--radius-md); border-left: 4px solid #f87171;">
+                <h4 style="color: white; font-size: 1rem; margin-bottom: 4px;"><i class="fa-solid fa-person-falling"></i> Stroke (F.A.S.T.)</h4>
+                <p style="color: #fee2e2; font-size: 0.82rem;">Face drooping, Arm weakness, Slurred speech, Time to call 112 immediately.</p>
+            </div>
+            <div style="background: rgba(0, 0, 0, 0.25); padding: 18px; border-radius: var(--radius-md); border-left: 4px solid #f87171;">
+                <h4 style="color: white; font-size: 1rem; margin-bottom: 4px;"><i class="fa-solid fa-droplet"></i> Uncontrolled Bleeding</h4>
+                <p style="color: #fee2e2; font-size: 0.82rem;">Spurting or heavy continuous blood loss that does not cease after direct firm pressure.</p>
+            </div>
+        </div>
+
+        <div style="background: white; color: var(--text-primary); border-radius: var(--radius-md); padding: 20px 24px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 16px;">
+            <div>
+                <span style="font-size: 0.8rem; font-weight: 700; color: var(--text-muted); text-transform: uppercase;">Official Emergency Hotlines (India)</span>
+                <div style="font-size: 1.4rem; font-weight: 800; color: #991b1b;">
+                    National Emergency: <strong>112</strong> &bull; Ambulance: <strong>102 / 108</strong> &bull; Tele-MANAS (Mental Health): <strong>14416</strong>
+                </div>
+            </div>
+            <a href="tel:112" class="btn-primary" style="background: #dc2626; box-shadow: 0 4px 12px rgba(220, 38, 38, 0.35);">
+                <i class="fa-solid fa-phone"></i> Call 112 Now
+            </a>
+        </div>
+    </div>
+
+    <!-- FAQ Accordion -->
+    <div style="max-width: 850px; margin: 0 auto;">
+        <div style="text-align: center; margin-bottom: 36px;">
+            <span class="hero-badge-pill"><i class="fa-solid fa-question"></i> Answers & Support</span>
+            <h2 style="font-size: 2.2rem;">Frequently Asked Questions</h2>
+        </div>
+
+        <div style="display: flex; flex-direction: column; gap: 16px;">
+            <div style="background: white; border: 1px solid var(--border-color); border-radius: var(--radius-md); padding: 20px; box-shadow: var(--shadow-sm);">
+                <h3 style="font-size: 1.1rem; color: var(--text-primary); margin-bottom: 8px;">Does this chatbot provide clinical medical diagnoses?</h3>
+                <p style="font-size: 0.9rem; color: var(--text-secondary); line-height: 1.6;">
+                    No. HealthAware AI is designed exclusively for public-health awareness, preventive lifestyle guidance, and general disease education. It does not replace the diagnosis, prescription, or clinical assessment of a qualified healthcare practitioner.
+                </p>
+            </div>
+
+            <div style="background: white; border: 1px solid var(--border-color); border-radius: var(--radius-md); padding: 20px; box-shadow: var(--shadow-sm);">
+                <h3 style="font-size: 1.1rem; color: var(--text-primary); margin-bottom: 8px;">What happens if the AI model is not confident in my question?</h3>
+                <p style="font-size: 0.9rem; color: var(--text-secondary); line-height: 1.6;">
+                    The system implements a configurable confidence threshold (default 60%). If the model's confidence falls below this threshold, it automatically delivers a clinical safety fallback: informing the user that the query could not be reliably matched and recommending consulting a doctor or rephrasing the question.
+                </p>
+            </div>
+
+            <div style="background: white; border: 1px solid var(--border-color); border-radius: var(--radius-md); padding: 20px; box-shadow: var(--shadow-sm);">
+                <h3 style="font-size: 1.1rem; color: var(--text-primary); margin-bottom: 8px;">How do the ML and Deep Learning models differ?</h3>
+                <p style="font-size: 0.9rem; color: var(--text-secondary); line-height: 1.6;">
+                    The Machine Learning engine uses TF-IDF n-gram vectorization with Logistic Regression. It is lightweight, ultra-fast, and highly accurate on common medical keywords. The Deep Learning model uses a Bidirectional Long Short-Term Memory (Bi-LSTM) neural network with word embeddings, allowing it to capture forward and backward sequence dependencies in conversational phrasing.
+                </p>
+            </div>
+
+            <div style="background: white; border: 1px solid var(--border-color); border-radius: var(--radius-md); padding: 20px; box-shadow: var(--shadow-sm);">
+                <h3 style="font-size: 1.1rem; color: var(--text-primary); margin-bottom: 8px;">Can I query the bot in Kannada?</h3>
+                <p style="font-size: 0.9rem; color: var(--text-secondary); line-height: 1.6;">
+                    Yes! The NLP preprocessing pipeline incorporates bilingual transliteration mapping for Kannada health terms such as <em>jvara</em> (fever), <em>seetha</em> (cold), <em>kemmu</em> (cough), <em>sakkare kayile</em> (diabetes), and <em>rakta ottada</em> (hypertension).
+                </p>
+            </div>
+
+            <div style="background: white; border: 1px solid var(--border-color); border-radius: var(--radius-md); padding: 20px; box-shadow: var(--shadow-sm);">
+                <h3 style="font-size: 1.1rem; color: var(--text-primary); margin-bottom: 8px;">How does speech input and text-to-speech work?</h3>
+                <p style="font-size: 0.9rem; color: var(--text-secondary); line-height: 1.6;">
+                    You can click the microphone icon in the chat interface to dictate your query using your device's Web Speech Recognition API. Clicking the speaker button on any bot response plays the guidance aloud via the Web SpeechSynthesis API.
+                </p>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

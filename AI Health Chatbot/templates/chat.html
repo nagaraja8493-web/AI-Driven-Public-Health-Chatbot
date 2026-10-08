@@ -1,0 +1,173 @@
+{% extends "base.html" %}
+
+{% block title %}Public Health Chatbot Assistant{% endblock %}
+
+{% block content %}
+<div class="container chat-page-container">
+    <div class="chat-wrapper">
+        <!-- Chat Control Sidebar -->
+        <aside class="chat-sidebar">
+            <!-- Model Switcher -->
+            <div class="model-switch-box">
+                <div class="sidebar-section-title">
+                    <i class="fa-solid fa-microchip"></i> Classification Engine
+                </div>
+                <div class="model-radio-group">
+                    <label class="model-radio-item">
+                        <input type="radio" name="modelSelector" value="ml" checked id="radioML">
+                        <div>
+                            <strong>TF-IDF + Logistic Regression</strong>
+                            <span class="model-desc-text">Machine Learning Baseline</span>
+                        </div>
+                    </label>
+                    <label class="model-radio-item">
+                        <input type="radio" name="modelSelector" value="dl" id="radioDL">
+                        <div>
+                            <strong>Embedding + Bi-LSTM</strong>
+                            <span class="model-desc-text">Deep Learning Neural Net</span>
+                        </div>
+                    </label>
+                </div>
+
+                <!-- Confidence Threshold -->
+                <div class="threshold-slider-group">
+                    <div class="threshold-slider-header">
+                        <span>Confidence Threshold:</span>
+                        <span id="thresholdValueDisplay">60%</span>
+                    </div>
+                    <input type="range" min="40" max="85" value="60" step="5" class="range-input" id="confidenceRange">
+                    <span class="model-desc-text" style="margin-top: 4px;">Below this threshold, ethical safety fallback is triggered.</span>
+                </div>
+            </div>
+
+            <!-- Language & Query Assistance -->
+            <div style="margin-bottom: 20px;">
+                <div class="sidebar-section-title">
+                    <i class="fa-solid fa-language"></i> Language & Transliteration
+                </div>
+                <p style="font-size: 0.78rem; color: var(--text-secondary); margin-bottom: 10px;">
+                    Supports English and Kannada health terms (e.g. <em>jvara, seetha, kemmu, rakkta ottada, sakkare kayile</em>).
+                </p>
+            </div>
+
+            <!-- Quick Questions -->
+            <div>
+                <div class="sidebar-section-title">
+                    <i class="fa-solid fa-lightbulb"></i> Suggested Questions
+                </div>
+                <div class="quick-prompts-list">
+                    <button class="quick-prompt-btn" onclick="sendSuggestedQuestion('What are common symptoms of diabetes?')">
+                        <i class="fa-solid fa-comment-dots"></i> Symptoms of diabetes?
+                    </button>
+                    <button class="quick-prompt-btn" onclick="sendSuggestedQuestion('What should I do if I have a high fever?')">
+                        <i class="fa-solid fa-comment-dots"></i> Managing high fever?
+                    </button>
+                    <button class="quick-prompt-btn" onclick="sendSuggestedQuestion('How can I lower high blood pressure naturally?')">
+                        <i class="fa-solid fa-comment-dots"></i> Lower blood pressure?
+                    </button>
+                    <button class="quick-prompt-btn" onclick="sendSuggestedQuestion('What is a healthy balanced diet?')">
+                        <i class="fa-solid fa-comment-dots"></i> Healthy balanced diet?
+                    </button>
+                    <button class="quick-prompt-btn" onclick="sendSuggestedQuestion('Nanage jvara ide, en madbeku?')">
+                        <i class="fa-solid fa-comment-dots"></i> Nanage jvara ide (Kannada)?
+                    </button>
+                    <button class="quick-prompt-btn" onclick="sendSuggestedQuestion('Severe chest pain and difficulty breathing')">
+                        <i class="fa-solid fa-triangle-exclamation" style="color: var(--emergency);"></i> Emergency Test (112)
+                    </button>
+                </div>
+            </div>
+        </aside>
+
+        <!-- Main Chat Area -->
+        <section class="chat-main-pane">
+            <!-- Chat Header -->
+            <div class="chat-header-bar">
+                <div class="chat-status-indicator">
+                    <div class="status-dot"></div>
+                    <div>
+                        <h3 style="font-size: 1.05rem;">HealthAware Clinical Assistant</h3>
+                        <div style="font-size: 0.75rem; color: var(--text-muted);">
+                            Active Model: <strong id="headerModelBadge" style="color: var(--primary);">Logistic Regression (ML)</strong>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="chat-actions-group">
+                    <button class="icon-btn" id="ttsToggleBtn" title="Toggle Auto-Read Audio Speech">
+                        <i class="fa-solid fa-volume-high"></i>
+                    </button>
+                    <button class="icon-btn" id="clearChatBtn" title="Clear Chat History">
+                        <i class="fa-solid fa-trash-can"></i>
+                    </button>
+                    <a href="{{ url_for('faq') }}#emergency" class="btn-primary-sm" style="background: var(--emergency); box-shadow: 0 2px 8px rgba(239, 68, 68, 0.3);">
+                        <i class="fa-solid fa-phone-volume"></i> SOS 112
+                    </a>
+                </div>
+            </div>
+
+            <!-- Messages Stream Area -->
+            <div class="chat-messages-area" id="chatMessagesArea">
+                <!-- Initial Bot Welcome Message -->
+                <div class="message-row bot">
+                    <div class="avatar-circle bot">
+                        <i class="fa-solid fa-robot"></i>
+                    </div>
+                    <div class="message-content-wrapper">
+                        <div class="message-bubble">
+                            <strong>Hello! I am your AI Public Health Awareness Assistant.</strong><br>
+                            I can provide general health information on common conditions (fever, colds, diabetes, hypertension, diet, hygiene, mental wellness, first aid).<br><br>
+                            <em>Note: I do not diagnose medical illnesses. For specific concerns or critical emergencies, always consult a licensed doctor.</em>
+                            <div class="message-meta-info">
+                                <span>HealthAware AI Bot</span>
+                                <span class="badge-tag intent">greeting</span>
+                                <span class="badge-tag conf-high">100% Verified</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Floating Jump-to-Latest Button -->
+            <button type="button" id="scrollToBottomBtn" class="scroll-bottom-floating-btn" onclick="scrollToBottom(true)" title="Scroll to latest messages">
+                <i class="fa-solid fa-arrow-down"></i> <span>Jump to Latest</span>
+            </button>
+
+            <!-- Typing indicator (hidden by default) -->
+            <div id="typingIndicator" style="display: none; padding: 0 24px 10px; font-size: 0.82rem; color: var(--text-muted); align-items: center; gap: 8px;">
+                <i class="fa-solid fa-circle-notch fa-spin"></i> Assistant is classifying intent & formulating verified response...
+            </div>
+
+            <!-- Chat Input Bar -->
+            <div class="chat-input-bar">
+                <form id="chatForm" class="chat-input-form" onsubmit="handleMessageSubmit(event)">
+                    <button type="button" class="input-action-btn" id="voiceMicBtn" title="Speak Question (Voice Input)">
+                        <i class="fa-solid fa-microphone"></i>
+                    </button>
+                    <input type="text" id="userInputText" class="chat-text-input" placeholder="Type your health question (e.g., 'What are symptoms of fever?')..." autocomplete="off" required>
+                    <button type="submit" class="input-action-btn send-btn" id="sendBtn" title="Send Message">
+                        <i class="fa-solid fa-paper-plane"></i>
+                    </button>
+                </form>
+            </div>
+        </section>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script src="{{ url_for('static', filename='js/chatbot.js') }}"></script>
+<script>
+    // Handle URL prefilled query parameter e.g. /chat?q=...
+    document.addEventListener("DOMContentLoaded", () => {
+        const urlParams = new URLSearchParams(window.location.search);
+        const prefill = urlParams.get("q");
+        if (prefill) {
+            const input = document.getElementById("userInputText");
+            if (input) {
+                input.value = prefill;
+                document.getElementById("chatForm").dispatchEvent(new Event("submit"));
+            }
+        }
+    });
+</script>
+{% endblock %}

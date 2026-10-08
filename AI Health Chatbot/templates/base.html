@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}AI Public Health Assistant{% endblock %} - HealthAware AI</title>
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@500;600;700;800&display=swap" rel="stylesheet">
+    <!-- Font Awesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Main Stylesheet -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    {% block extra_head %}{% endblock %}
+</head>
+<body class="theme-light">
+    <!-- Top Emergency Bar -->
+    <div class="emergency-top-bar" id="topEmergencyBar">
+        <div class="container d-flex-between">
+            <div class="emergency-badge">
+                <i class="fa-solid fa-triangle-exclamation pulse-anim"></i>
+                <span><strong>Emergency Medical Notice:</strong> If experiencing acute chest pain, severe breathlessness, or collapse, call <strong>112</strong> immediately.</span>
+            </div>
+            <a href="{{ url_for('faq') }}#emergency" class="btn-emergency-link">Urgent Help Guide &rarr;</a>
+        </div>
+    </div>
+
+    <!-- Navigation Bar -->
+    <header class="navbar-wrapper">
+        <nav class="container navbar">
+            <a href="{{ url_for('index') }}" class="brand-logo">
+                <div class="logo-icon">
+                    <i class="fa-solid fa-heart-pulse"></i>
+                </div>
+                <div class="brand-text">
+                    <span class="brand-title">HealthAware<span class="brand-ai">AI</span></span>
+                    <span class="brand-subtitle">Public Health Assistant</span>
+                </div>
+            </a>
+
+            <div class="nav-menu" id="navMenu">
+                <a href="{{ url_for('index') }}" class="nav-link {% if request.endpoint == 'index' %}active{% endif %}">
+                    <i class="fa-solid fa-house"></i> Home
+                </a>
+                <a href="{{ url_for('chat') }}" class="nav-link nav-chat-highlight {% if request.endpoint == 'chat' %}active{% endif %}">
+                    <i class="fa-solid fa-comments"></i> Chatbot
+                </a>
+                <a href="{{ url_for('topics') }}" class="nav-link {% if request.endpoint == 'topics' %}active{% endif %}">
+                    <i class="fa-solid fa-book-medical"></i> Health Topics
+                </a>
+                <a href="{{ url_for('faq') }}" class="nav-link {% if request.endpoint == 'faq' %}active{% endif %}">
+                    <i class="fa-solid fa-circle-question"></i> FAQ & Emergency
+                </a>
+                {% if current_user and current_user.role == 'admin' %}
+                <a href="{{ url_for('admin') }}" class="nav-link {% if request.endpoint == 'admin' %}active{% endif %}">
+                    <i class="fa-solid fa-chart-line"></i> Admin Dashboard
+                </a>
+                {% endif %}
+            </div>
+
+            <div class="nav-actions">
+                {% if current_user %}
+                    {% if current_user.role == 'admin' %}
+                    <a href="{{ url_for('admin') }}" class="btn-primary-sm" style="background: linear-gradient(135deg, #6366f1 0%, #4f46e5 100%); font-size: 0.8rem; padding: 6px 12px; box-shadow: 0 2px 6px rgba(99,102,241,0.4);">
+                        <i class="fa-solid fa-shield-halved"></i> Admin Console
+                    </a>
+                    {% endif %}
+                    <div class="user-pill">
+                        <i class="fa-solid fa-user-circle"></i>
+                        <span>{{ current_user.name.split()[0] }}</span>
+                        <a href="{{ url_for('logout') }}" class="logout-btn" title="Logout"><i class="fa-solid fa-right-from-bracket"></i></a>
+                    </div>
+                {% else %}
+                    <a href="{{ url_for('login') }}" class="btn-ghost"><i class="fa-solid fa-arrow-right-to-bracket"></i> Login</a>
+                    <a href="{{ url_for('register') }}" class="btn-primary-sm">Register</a>
+                {% endif %}
+                <button class="menu-toggle-btn" id="menuToggleBtn" aria-label="Toggle menu">
+                    <i class="fa-solid fa-bars"></i>
+                </button>
+            </div>
+        </nav>
+    </header>
+
+    <!-- Main Content Container -->
+    <main class="main-content">
+        {% block content %}{% endblock %}
+    </main>
+
+    <!-- Global Medical Disclaimer Footer -->
+    <footer class="footer-wrapper">
+        <div class="container footer-content">
+            <div class="footer-grid">
+                <div class="footer-col">
+                    <div class="footer-brand">
+                        <div class="logo-icon small">
+                            <i class="fa-solid fa-heart-pulse"></i>
+                        </div>
+                        <h3>HealthAware AI</h3>
+                    </div>
+                    <p class="footer-text">
+                        An intelligent public-health awareness system utilizing TF-IDF with Logistic Regression and Bidirectional LSTM Deep Learning to educate the community on preventive wellness and common symptoms.
+                    </p>
+                    <div class="helpline-box">
+                        <i class="fa-solid fa-phone-volume"></i>
+                        <div>
+                            <span class="helpline-title">India National Emergency</span>
+                            <span class="helpline-num">112 | Ambulance: 102/108</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="footer-col">
+                    <h4>Quick Navigation</h4>
+                    <ul class="footer-links">
+                        <li><a href="{{ url_for('index') }}"><i class="fa-solid fa-chevron-right"></i> Home Overview</a></li>
+                        <li><a href="{{ url_for('chat') }}"><i class="fa-solid fa-chevron-right"></i> Live Chatbot Assistant</a></li>
+                        <li><a href="{{ url_for('topics') }}"><i class="fa-solid fa-chevron-right"></i> Verified Health Library</a></li>
+                        {% if current_user and current_user.role == 'admin' %}
+                        <li><a href="{{ url_for('admin') }}"><i class="fa-solid fa-chevron-right"></i> Analytics & Metrics</a></li>
+                        {% endif %}
+                    </ul>
+                </div>
+
+                <div class="footer-col">
+                    <h4>Key Health Topics</h4>
+                    <ul class="footer-links">
+                        <li><a href="{{ url_for('topics') }}"><i class="fa-solid fa-chevron-right"></i> Diabetes & Glucose Care</a></li>
+                        <li><a href="{{ url_for('topics') }}"><i class="fa-solid fa-chevron-right"></i> Hypertension & Heart Health</a></li>
+                        <li><a href="{{ url_for('topics') }}"><i class="fa-solid fa-chevron-right"></i> Fever, Cold & Viral Infection</a></li>
+                        <li><a href="{{ url_for('topics') }}"><i class="fa-solid fa-chevron-right"></i> Mental Wellness & Stress</a></li>
+                        <li><a href="{{ url_for('faq') }}"><i class="fa-solid fa-chevron-right"></i> Emergency Protocols</a></li>
+                    </ul>
+                </div>
+
+                <div class="footer-col">
+                    <div class="ethical-card">
+                        <h4><i class="fa-solid fa-shield-halved"></i> Ethical Disclaimer</h4>
+                        <p>
+                            HealthAware AI is an informational educational tool. It does <strong>not</strong> provide medical diagnoses, treatment plans, or pharmaceutical prescriptions. Always consult a certified physician for medical emergencies and clinical evaluations.
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="footer-bottom">
+                <p>&copy; 2026 HealthAware AI Project - Designed for Public Health Awareness using ML & Deep Learning.</p>
+                <div class="footer-badge-list">
+                    <span class="tech-pill">TF-IDF + Logistic Regression</span>
+                    <span class="tech-pill">Bi-LSTM Neural Network</span>
+                    <span class="tech-pill">SQLite</span>
+                    <span class="tech-pill">Flask</span>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Global Javascript -->
+    <script>
+        // Responsive mobile menu toggle
+        const toggleBtn = document.getElementById('menuToggleBtn');
+        const navMenu = document.getElementById('navMenu');
+        if (toggleBtn && navMenu) {
+            toggleBtn.addEventListener('click', () => {
+                navMenu.classList.toggle('active');
+            });
+        }
+    </script>
+    {% block scripts %}{% endblock %}
+</body>
+</html>
